@@ -4,56 +4,99 @@ public class PlayerMovement : MonoBehaviour
 {
     public Animator playerAnim;
     public Rigidbody playerRigid;
-    public float moveSpeed = 5f;
+    public Transform playerVisual;
+    public float moveSpeed = 3f;
+    public float lrSpeed = 9f;
     public float rotationSpeed = 180f;
     public float jumpForce = 10f;
-    public Transform groundCheck;
+    public float crouchScale = 0.5f;
+  //  public Transform groundCheck;
     public LayerMask groundMask;
+    public CapsuleCollider capsuleCollider;
 
     private bool isGrounded;
 
     void Update()
     {
-        // Check for movement input
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        // Keep moving forward continuously
+        // Vector3 moveDirection = transform.forward * moveSpeed;
+        // playerRigid.MovePosition(transform.position + moveDirection * Time.deltaTime);
+        transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed, Space.World);
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        // Check for jump input
+        if (Input.GetKeyDown(KeyCode.W))  //&& isGrounded
         {
-            // Apply jump force
             playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
             playerAnim.SetTrigger("jump");
         }
 
-        // Calculate movement direction
-        Vector3 movement = new Vector3(horizontal, 0f, vertical).normalized;
-
-        // Check if there is any movement input
-        if (movement.magnitude >= 0.1f)
+        if (Input.GetKeyUp(KeyCode.W))
         {
-            // Calculate and apply the rotation
-            float targetAngle = Mathf.Atan2(movement.x, movement.z) * Mathf.Rad2Deg;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref rotationSpeed, 0.1f);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-
-            // Calculate and apply the movement
-            Vector3 moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            playerRigid.MovePosition(transform.position + moveDirection * moveSpeed * Time.deltaTime);
-
-            // Set "Run" trigger in the animator
-            playerAnim.SetBool("run", true);
+           
+            playerAnim.SetTrigger("run");
         }
-        else
+
+
+
+        if (Input.GetKeyDown(KeyCode.Space) )
         {
-            // No movement input, set "Run" trigger to false and play "Idle" animation
-            playerAnim.SetBool("idle", true);
+          
+            playerAnim.SetTrigger("flip");
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+
+            playerAnim.SetTrigger("run");
+        }
+
+
+
+
+        // Check for crouch input
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+          //  transform.localScale = new Vector3(1f, crouchScale, 1f);
+            playerAnim.SetTrigger("slide");
+            capsuleCollider.height = 0.8258972f;
+            capsuleCollider.center = new Vector3(0.006896973f, -0.423111f, 0.1062469f);
+            Debug.Log(capsuleCollider.height);
+            Debug.Log(capsuleCollider.center);
+
+
+        }
+        else if (Input.GetKeyUp(KeyCode.S))
+        {
+           // transform.localScale = Vector3.one;
+            playerAnim.SetTrigger("run");
+            capsuleCollider.height = 1.916809f;
+            capsuleCollider.center = new Vector3(0.006896973f, 0.03842163f, 0.1062469f);
+        }
+
+        // Check for left/right movement input
+      //  float horizontal = Input.GetAxis("Horizontal");
+      //  float vertical = Input.GetAxis("Vertical");
+
+       
+
+        // Move left or right based on 'A' and 'D' keys
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Translate( Vector3.left * Time.deltaTime * lrSpeed);
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            // playerRigid.MovePosition(transform.position + Vector3.right * moveSpeed * Time.deltaTime );
+
+            transform.Translate(Vector3.left * Time.deltaTime * lrSpeed * -1);
+
         }
     }
 
-    void FixedUpdate()
-    {
-        // Check if the player is grounded
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, groundMask);
-    }
+  //  void FixedUpdate()
+   // {
+    //    isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, groundMask);
+   // }
 }
