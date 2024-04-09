@@ -16,15 +16,46 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isGrounded;
 
-    void Update()
+    public void MoveForward()
     {
+        transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed, Space.World);
+        playerAnim.SetTrigger("run");
+    }
+
+    public void Jump()
+    {
+        playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        isGrounded = false;
+        playerAnim.SetTrigger("jump");
+    }
+
+    public void Crouch()
+    {
+        playerAnim.SetTrigger("slide");
+        capsuleCollider.height = 0.8258972f;
+        capsuleCollider.center = new Vector3(0.006896973f, -0.423111f, 0.1062469f);
+    }
+
+    public void MoveLeft()
+    {
+        transform.Translate(Vector3.left * Time.deltaTime * lrSpeed);
+    }
+
+    public void MoveRight()
+    {
+        transform.Translate(Vector3.left * Time.deltaTime * lrSpeed * -1);
+    }
+}
+
+   // void Update()
+    //{
         // Keep moving forward continuously
         // Vector3 moveDirection = transform.forward * moveSpeed;
         // playerRigid.MovePosition(transform.position + moveDirection * Time.deltaTime);
-        transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed, Space.World);
+      //  transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed, Space.World);
 
         // Check for jump input
-        if (Input.GetKeyDown(KeyCode.W))  //&& isGrounded
+       /* if (Input.GetKeyDown(KeyCode.W))  //&& isGrounded
         {
             playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isGrounded = false;
@@ -92,11 +123,11 @@ public class PlayerMovement : MonoBehaviour
 
             transform.Translate(Vector3.left * Time.deltaTime * lrSpeed * -1);
 
-        }
-    }
+        }*/
+   // }
 
   //  void FixedUpdate()
    // {
     //    isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, groundMask);
    // }
-}
+
