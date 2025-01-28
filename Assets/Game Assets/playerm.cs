@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public float rotationSpeed = 180f;
     public float jumpForce = 10f;
     public float crouchScale = 0.5f;
-  //  public Transform groundCheck;
+    public Transform groundCheck;
     public LayerMask groundMask;
     public CapsuleCollider capsuleCollider;
 
@@ -24,9 +24,12 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump()
     {
-        playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-        isGrounded = false;
-        playerAnim.SetTrigger("jump");
+        if (isGrounded)
+        {
+            playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            isGrounded = false;
+            playerAnim.SetTrigger("jump");
+        }
     }
 
     public void Crouch()
@@ -36,6 +39,12 @@ public class PlayerMovement : MonoBehaviour
         capsuleCollider.center = new Vector3(0.006896973f, -0.423111f, 0.1062469f);
     }
 
+    public void ResetCrouch()
+    {
+        capsuleCollider.height = 1.916809f;
+        capsuleCollider.center = new Vector3(0.006896973f, 0.03842163f, 0.1062469f);
+    }
+
     public void MoveLeft()
     {
         transform.Translate(Vector3.left * Time.deltaTime * lrSpeed);
@@ -43,91 +52,62 @@ public class PlayerMovement : MonoBehaviour
 
     public void MoveRight()
     {
-        transform.Translate(Vector3.left * Time.deltaTime * lrSpeed * -1);
+        transform.Translate(Vector3.right * Time.deltaTime * lrSpeed);
     }
-}
 
-   // void Update()
-    //{
+    private void Update()
+    {
         // Keep moving forward continuously
-        // Vector3 moveDirection = transform.forward * moveSpeed;
-        // playerRigid.MovePosition(transform.position + moveDirection * Time.deltaTime);
-      //  transform.Translate(Vector3.forward * Time.deltaTime * moveSpeed, Space.World);
+        Vector3 moveDirection = transform.forward * moveSpeed;
+        playerRigid.MovePosition(transform.position + moveDirection * Time.deltaTime);
 
         // Check for jump input
-       /* if (Input.GetKeyDown(KeyCode.W))  //&& isGrounded
+        if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
-            playerRigid.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isGrounded = false;
-            playerAnim.SetTrigger("jump");
+            Jump();
         }
 
         if (Input.GetKeyUp(KeyCode.W))
         {
-           
             playerAnim.SetTrigger("run");
         }
-
-
-
-        if (Input.GetKeyDown(KeyCode.Space) )
-        {
-          
-            playerAnim.SetTrigger("flip");
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-
-            playerAnim.SetTrigger("run");
-        }
-
-
-
 
         // Check for crouch input
         if (Input.GetKeyDown(KeyCode.S))
         {
-          //  transform.localScale = new Vector3(1f, crouchScale, 1f);
-            playerAnim.SetTrigger("slide");
-            capsuleCollider.height = 0.8258972f;
-            capsuleCollider.center = new Vector3(0.006896973f, -0.423111f, 0.1062469f);
-            Debug.Log(capsuleCollider.height);
-            Debug.Log(capsuleCollider.center);
-
-
+            Crouch();
         }
         else if (Input.GetKeyUp(KeyCode.S))
         {
-           // transform.localScale = Vector3.one;
+            ResetCrouch();
             playerAnim.SetTrigger("run");
-            capsuleCollider.height = 1.916809f;
-            capsuleCollider.center = new Vector3(0.006896973f, 0.03842163f, 0.1062469f);
+        }
+
+        // Check for flip input
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            playerAnim.SetTrigger("flip");
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            playerAnim.SetTrigger("run");
         }
 
         // Check for left/right movement input
-      //  float horizontal = Input.GetAxis("Horizontal");
-      //  float vertical = Input.GetAxis("Vertical");
-
-       
-
-        // Move left or right based on 'A' and 'D' keys
         if (Input.GetKey(KeyCode.A))
         {
-            transform.Translate( Vector3.left * Time.deltaTime * lrSpeed);
+            MoveLeft();
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            // playerRigid.MovePosition(transform.position + Vector3.right * moveSpeed * Time.deltaTime );
+            MoveRight();
+        }
+    }
 
-            transform.Translate(Vector3.left * Time.deltaTime * lrSpeed * -1);
-
-        }*/
-   // }
-
-  //  void FixedUpdate()
-   // {
-    //    isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, groundMask);
-   // }
-
+    private void FixedUpdate()
+    {
+        // Check if the player is grounded
+        isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, groundMask);
+    }
+}
