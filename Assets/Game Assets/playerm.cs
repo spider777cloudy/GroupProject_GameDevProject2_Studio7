@@ -107,7 +107,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Check if the player is grounded
-        isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, groundMask);
+        if (groundCheck != null)
+            // Check if the player is grounded
+            isGrounded = Physics.CheckSphere(groundCheck.position, 0.1f, groundMask);
     }
 }
