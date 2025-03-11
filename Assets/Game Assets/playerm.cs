@@ -44,15 +44,22 @@ public class PlayerMovement : MonoBehaviour
         capsuleCollider.height = 1.916809f;
         capsuleCollider.center = new Vector3(0.006896973f, 0.03842163f, 0.1062469f);
     }
-
+    public float leftBoundary = 635f;
+    public float rightBoundary = 643.8f;
+    void MoveTrim()
+    {
+        transform.transform.position = new Vector3(Mathf.Clamp(transform.position.x, leftBoundary, rightBoundary), transform.position.y, transform.position.z);
+    }
     public void MoveLeft()
     {
         transform.Translate(Vector3.left * Time.deltaTime * lrSpeed);
+        MoveTrim();
     }
 
     public void MoveRight()
     {
         transform.Translate(Vector3.right * Time.deltaTime * lrSpeed);
+        MoveTrim();
     }
 
     private void Update()
