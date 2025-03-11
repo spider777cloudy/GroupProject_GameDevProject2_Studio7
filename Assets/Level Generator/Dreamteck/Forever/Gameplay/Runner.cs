@@ -375,11 +375,11 @@ namespace Dreamteck.Forever
                 if (!enabled) return;
                 input.transform.localScale = GetScale(input.transform.localScale);
                 input.MovePosition(GetPosition(input.position));
-                Vector3 velocity = input.velocity;
+                Vector3 velocity = input.linearVelocity;
                 if (applyPositionX) velocity.x = 0f;
                 if (applyPositionY) velocity.y = 0f;
                 if (applyPositionZ) velocity.z = 0f;
-                input.velocity = velocity;
+                input.linearVelocity = velocity;
                 input.MoveRotation(GetRotation(input.rotation));
                 velocity = input.angularVelocity;
                 if (applyRotationX) velocity.x = 0f;
@@ -393,10 +393,10 @@ namespace Dreamteck.Forever
                 if (!enabled) return;
                 input.transform.localScale = GetScale(input.transform.localScale);
                 input.position = GetPosition(input.position);
-                Vector2 velocity = input.velocity;
+                Vector2 velocity = input.linearVelocity;
                 if (applyPositionX) velocity.x = 0f;
                 if (applyPositionY) velocity.y = 0f;
-                input.velocity = velocity;
+                input.linearVelocity = velocity;
                 input.rotation = -GetRotation(Quaternion.Euler(0f, 0f, input.rotation)).eulerAngles.z;
                 if (applyRotationX) input.angularVelocity = 0f;
             }
